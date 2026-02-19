@@ -15,6 +15,7 @@ const EditListingPage = () => {
     const [preview, setPreview] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [statusCode, setStatusCode] = useState(null);
     const [error, setError] = useState('');
 
     useEffect(() => {
@@ -39,7 +40,9 @@ const EditListingPage = () => {
                 setDescription(product.description);
                 setCurrentImage(product.image);
             } catch (err) {
-                setError('Failed to load listing');
+                const code = err.response?.status || 500;
+                setStatusCode(code);
+                setError(`(${code}) Failed to load listing`);
             } finally {
                 setLoading(false);
             }
@@ -59,9 +62,11 @@ const EditListingPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        setStatusCode(null);
 
         if (!title || !price || !description) {
-            setError('Title, price and description are required.');
+            setStatusCode(400);
+            setError('(400) Title, price and description are required.');
             return;
         }
 
@@ -83,9 +88,12 @@ const EditListingPage = () => {
                 await api.put(`/products/${id}`, { title, price, description });
             }
 
-            navigate(`/products/${id}`);
+            setStatusCode(200);
+            setTimeout(() => navigate(`/products/${id}`), 1500);
         } catch (err) {
-            setError(err.response?.data?.error || 'Failed to update listing');
+            const code = err.response?.status || 500;
+            setStatusCode(code);
+            setError(`(${code}) ${err.response?.data?.error || 'Failed to update listing'}`);
         } finally {
             setSaving(false);
         }

@@ -7,7 +7,7 @@ const Navbar = () => {
     return (
         <nav className="bg-blue-600 text-white p-4">
             <div className="container mx-auto flex justify-between items-center">
-                <Link to="/" className="text-xl font-bold">MarketPlace</Link>
+                <Link to="/" className="text-xl font-bold">Book Store</Link>
                 <div className="flex items-center gap-4">
                     {user ? (
                         <>

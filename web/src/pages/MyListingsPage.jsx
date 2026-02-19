@@ -8,6 +8,7 @@ const MyListingsPage = () => {
     const navigate = useNavigate();
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [statusMessage, setStatusMessage] = useState('');
 
     useEffect(() => {
         if (!user) {
@@ -35,8 +36,12 @@ const MyListingsPage = () => {
         try {
             await api.delete(`/products/${id}`);
             setListings((prev) => prev.filter((p) => p._id !== id));
+            setStatusMessage('Listing deleted successfully (Status: 200)');
+            setTimeout(() => setStatusMessage(''), 3000);
         } catch (err) {
-            alert(err.response?.data?.error || 'Failed to delete listing');
+            const code = err.response?.status || 500;
+            setStatusMessage(`(${code}) ${err.response?.data?.error || 'Failed to delete listing'}`);
+            setTimeout(() => setStatusMessage(''), 3000);
         }
     };
 
@@ -48,6 +53,16 @@ const MyListingsPage = () => {
                 <h1 className="text-4xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
                     My Listings
                 </h1>
+
+                {statusMessage && (
+                    <div className={`mb-6 p-4 rounded-lg text-sm font-semibold border ${
+                        statusMessage.includes('successfully') 
+                            ? 'bg-green-50 border-green-300 text-green-700'
+                            : 'bg-red-50 border-red-300 text-red-700'
+                    }`}>
+                        {statusMessage}
+                    </div>
+                )}
 
                 {listings.length === 0 ? (
                     <div className="text-center py-16">

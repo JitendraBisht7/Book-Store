@@ -32,7 +32,7 @@ router.post('/', auth, async (req, res) => {
         product.sold = true;
         await product.save();
 
-        res.status(201).json({ message: 'Order placed successfully!', order });
+        res.status(201).json({ status: 201, message: 'Order placed successfully!', order });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -44,7 +44,7 @@ router.get('/my', auth, async (req, res) => {
         const orders = await Order.find({ buyer: req.user._id })
             .populate('product')
             .sort({ createdAt: -1 });
-        res.json(orders);
+        res.status(200).json(orders);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

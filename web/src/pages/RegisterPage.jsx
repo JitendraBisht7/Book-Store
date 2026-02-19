@@ -9,15 +9,20 @@ const RegisterPage = () => {
     const { register } = useAuth();
     const navigate = useNavigate();
     const [error, setError] = useState('');
+    const [statusCode, setStatusCode] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        setStatusCode(null);
         try {
             await register(username, email, password);
-            navigate('/login');
+            setStatusCode(201);
+            setTimeout(() => navigate('/login'), 1500);
         } catch (err) {
-            setError(err.response?.data?.error || 'Registration failed');
+            const code = err.response?.status || 500;
+            setStatusCode(code);
+            setError(`(${code}) ${err.response?.data?.error || 'Registration failed'}`);
         }
     };
 
@@ -25,7 +30,11 @@ const RegisterPage = () => {
         <div className="flex justify-center items-center h-screen bg-gray-100">
             <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
                 <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Create an Account</h2>
-                {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+                {error && (
+                    <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">
+                        {error}
+                    </div>
+                )}
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">

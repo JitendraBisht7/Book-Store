@@ -8,6 +8,7 @@ const MyOrdersPage = () => {
     const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         if (!user) {
@@ -20,7 +21,8 @@ const MyOrdersPage = () => {
                 const res = await api.get('/orders/my');
                 setOrders(res.data);
             } catch (err) {
-                console.error('Failed to fetch orders', err);
+                const code = err.response?.status || 500;
+                setError(`(${code}) Failed to fetch orders`);
             } finally {
                 setLoading(false);
             }
@@ -37,6 +39,12 @@ const MyOrdersPage = () => {
                 <h1 className="text-4xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-green-500 to-blue-600">
                     My Purchases
                 </h1>
+
+                {error && (
+                    <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg text-sm mb-6">
+                        {error}
+                    </div>
+                )}
 
                 {orders.length === 0 ? (
                     <div className="text-center py-16">

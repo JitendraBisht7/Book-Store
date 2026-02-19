@@ -27,7 +27,7 @@ router.post('/', auth, upload.single('image'), async (req, res) => {
 router.get('/my', auth, async (req, res) => {
     try {
         const products = await Product.find({ owner: req.user._id }).sort({ createdAt: -1 });
-        res.json(products);
+        res.status(200).json(products);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -50,7 +50,7 @@ router.get('/', async (req, res) => {
 
         const count = await Product.countDocuments(query);
 
-        res.json({
+        res.status(200).json({
             products,
             totalPages: Math.ceil(count / limit),
             currentPage: page
@@ -65,7 +65,7 @@ router.get('/:id', async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
         if (!product) return res.status(404).json({ error: 'Product not found' });
-        res.json(product);
+        res.status(200).json(product);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -91,7 +91,7 @@ router.put('/:id', auth, upload.single('image'), async (req, res) => {
             { new: true }
         );
         if (!product) return res.status(404).json({ error: 'Product not found or unauthorized' });
-        res.json(product);
+        res.status(200).json(product);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -102,7 +102,7 @@ router.delete('/:id', auth, async (req, res) => {
     try {
         const product = await Product.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
         if (!product) return res.status(404).json({ error: 'Product not found or unauthorized' });
-        res.json({ message: 'Product deleted' });
+        res.status(200).json({ message: 'Product deleted' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

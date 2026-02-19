@@ -11,7 +11,7 @@ router.post('/favorites/:productId', auth, async (req, res) => {
             user.favorites.push(req.params.productId);
             await user.save();
         }
-        res.json(user.favorites);
+        res.status(200).json(user.favorites);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -23,7 +23,7 @@ router.delete('/favorites/:productId', auth, async (req, res) => {
         const user = await User.findById(req.user._id);
         user.favorites = user.favorites.filter(id => id.toString() !== req.params.productId);
         await user.save();
-        res.json(user.favorites);
+        res.status(200).json(user.favorites);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -33,7 +33,7 @@ router.delete('/favorites/:productId', auth, async (req, res) => {
 router.get('/favorites', auth, async (req, res) => {
     try {
         const user = await User.findById(req.user._id).populate('favorites');
-        res.json(user.favorites);
+        res.status(200).json(user.favorites);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

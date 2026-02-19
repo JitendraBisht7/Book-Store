@@ -13,6 +13,7 @@ const CheckoutPage = () => {
     const [loading, setLoading] = useState(true);
     const [placing, setPlacing] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [statusCode, setStatusCode] = useState(null);
     const [error, setError] = useState('');
 
     useEffect(() => {
@@ -25,11 +26,14 @@ const CheckoutPage = () => {
             try {
                 const res = await api.get(`/products/${id}`);
                 if (res.data.sold) {
-                    setError('This product has already been sold');
+                    setStatusCode(400);
+                    setError('(400) This product has already been sold');
                 }
                 setProduct(res.data);
             } catch (err) {
-                setError('Product not found');
+                const code = err.response?.status || 500;
+                setStatusCode(code);
+                setError(`(${code}) Product not found`);
             } finally {
                 setLoading(false);
             }
@@ -41,27 +45,33 @@ const CheckoutPage = () => {
     const handlePlaceOrder = async (e) => {
         e.preventDefault();
         setError('');
+        setStatusCode(null);
 
         if (!address.trim() || !phone.trim()) {
-            setError('Please fill in both address and phone number.');
+            setStatusCode(400);
+            setError('(400) Please fill in both address and phone number.');
             return;
         }
 
         if (!/^[6-9]\d{9}$/.test(phone.trim())) {
-            setError('Please enter a valid 10-digit Indian phone number.');
+            setStatusCode(400);
+            setError('(400) Please enter a valid 10-digit Indian phone number.');
             return;
         }
 
         setPlacing(true);
         try {
-            await api.post('/orders', {
+            const response = await api.post('/orders', {
                 productId: id,
                 address: address.trim(),
                 phone: phone.trim(),
             });
+            setStatusCode(201);
             setSuccess(true);
         } catch (err) {
-            setError(err.response?.data?.error || 'Failed to place order');
+            const code = err.response?.status || 500;
+            setStatusCode(code);
+            setError(`(${code}) ${err.response?.data?.error || 'Failed to place order'}`);
         } finally {
             setPlacing(false);
         }
@@ -80,7 +90,8 @@ const CheckoutPage = () => {
                         </svg>
                     </div>
                     <h2 className="text-3xl font-bold text-gray-800 mb-3">Order Placed!</h2>
-                    <p className="text-gray-500 mb-6">Your order for <strong>{product?.title}</strong> has been placed successfully.</p>
+                    <p className="text-gray-500 mb-2">Your order for <strong>{product?.title}</strong> has been placed successfully.</p>
+                    <p className="text-sm text-gray-400 mb-6">(Status: {statusCode})</p>
                     <button
                         onClick={() => navigate('/')}
                         className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-6 rounded-lg hover:from-blue-700 hover:to-purple-700 transition shadow-lg"

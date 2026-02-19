@@ -13,6 +13,8 @@ const AddListingPage = () => {
     const [preview, setPreview] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [statusCode, setStatusCode] = useState(null);
+    const [success, setSuccess] = useState(false);
 
     if (!user) {
         navigate('/login');
@@ -30,9 +32,12 @@ const AddListingPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        setSuccess(false);
+        setStatusCode(null);
 
         if (!title || !price || !description || !image) {
             setError('All fields including an image are required.');
+            setStatusCode(400);
             return;
         }
 
@@ -44,13 +49,17 @@ const AddListingPage = () => {
             formData.append('description', description);
             formData.append('image', image);
 
-            await api.post('/products', formData, {
+            const response = await api.post('/products', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
 
-            navigate('/');
+            setStatusCode(201);
+            setSuccess(true);
+            setTimeout(() => navigate('/'), 1500);
         } catch (err) {
-            setError(err.response?.data?.error || 'Failed to create listing');
+            const code = err.response?.status || 500;
+            setStatusCode(code);
+            setError(`(${code}) ${err.response?.data?.error || 'Failed to create listing'}`);
         } finally {
             setLoading(false);
         }
@@ -70,6 +79,12 @@ const AddListingPage = () => {
                     {error && (
                         <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg text-sm">
                             {error}
+                        </div>
+                    )}
+
+                    {success && (
+                        <div className="bg-green-50 border border-green-300 text-green-700 px-4 py-3 rounded-lg text-sm font-semibold">
+                            ✓ Listing created successfully! (Status: {statusCode})
                         </div>
                     )}
 
