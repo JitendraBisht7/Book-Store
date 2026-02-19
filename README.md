@@ -2,17 +2,21 @@
 
 A premium marketplace for campus students to buy and sell books.
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/JitendraBisht7/Book-Store)
+## 🚀 Deployment
+This project is hosted on Render with a separate backend and frontend.
 
-## 🚀 One-Click Deployment
-This project is configured for one-click deployment using Render Blueprints. 
+### Backend Setup
+- **Platform**: Render Web Service
+- **Root Directory**: `backend`
+- **Build Command**: `npm install`
+- **Start Command**: `node server.js`
 
-1. Click the **Deploy to Render** button above.
-2. Render will automatically configure:
-   - **Backend**: Node.js Web Service (Express/MongoDB)
-   - **Frontend**: Vite Static Site (React/Tailwind)
-3. When prompted, provide your `MONGO_URI` (from MongoDB Atlas).
-4. The blueprint will handle linking the frontend to the backend automatically.
+### Frontend Setup
+- **Platform**: Render Static Site
+- **Root Directory**: `web`
+- **Build Command**: `npm run build`
+- **Publish Directory**: `dist`
+
 
 ## 🛠 Features
 - **Premium UI**: Modern, responsive design built with Tailwind CSS.
