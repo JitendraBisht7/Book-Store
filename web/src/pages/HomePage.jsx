@@ -35,8 +35,10 @@ const HomePage = () => {
     };
 
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-3xl font-bold mb-8 text-center">Featured Products</h1>
+        <div className="container mx-auto px-4 py-6 md:py-10">
+            <h1 className="text-2xl md:text-4xl font-extrabold mb-8 text-center text-gray-900 tracking-tight">
+                Discover Your Next <span className="text-blue-600">Favorite Book</span>
+            </h1>
 
             <SearchBar onSearch={handleSearch} />
 

@@ -33,21 +33,30 @@ const FavoritesPage = () => {
     if (loading) return <div className="text-center mt-8">Loading...</div>;
 
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-3xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
-                Your Favorites
+        <div className="container mx-auto px-4 py-8 md:py-12">
+            <h1 className="text-3xl md:text-4xl font-black mb-10 text-center text-gray-900 tracking-tight">
+                My <span className="text-red-500">Favorites</span>
             </h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
                 {favorites.map(product => (
                     <ProductCard key={product._id} product={product} />
                 ))}
-                {favorites.length === 0 && (
-                    <p className="col-span-full text-center text-gray-500 text-lg">
-                        No favorites yet. Go explore!
-                    </p>
-                )}
             </div>
+
+            {favorites.length === 0 && (
+                <div className="text-center py-20 bg-white rounded-2xl shadow-sm border-2 border-dashed border-gray-100 max-w-2xl mx-auto">
+                    <p className="text-gray-400 text-xl font-medium mb-4">
+                        No favorites yet
+                    </p>
+                    <button
+                        onClick={() => navigate('/')}
+                        className="text-blue-600 font-bold hover:underline"
+                    >
+                        Explore some books →
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

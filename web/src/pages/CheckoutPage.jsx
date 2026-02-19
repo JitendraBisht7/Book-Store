@@ -106,102 +106,128 @@ const CheckoutPage = () => {
     if (!product) return <div className="text-center mt-8 text-red-500">{error}</div>;
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8 px-4">
-            <div className="max-w-3xl mx-auto">
-                <h1 className="text-4xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-green-500 to-blue-600">
-                    Checkout
-                </h1>
+        <div className="min-h-screen bg-gray-50 py-8 px-4 md:py-12">
+            <div className="max-w-4xl mx-auto">
+                <div className="text-center mb-10">
+                    <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight mb-3">
+                        Secure <span className="text-blue-600">Checkout</span>
+                    </h1>
+                    <p className="text-gray-500 font-medium">Complete your purchase to own this book</p>
+                </div>
 
-                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                    {/* Book Details */}
-                    <div className="flex flex-col sm:flex-row">
-                        <img
-                            src={product.image || 'https://via.placeholder.com/300'}
-                            alt={product.title}
-                            className="w-full sm:w-48 h-48 object-cover"
-                        />
-                        <div className="p-6 flex-grow">
-                            <h2 className="text-2xl font-bold mb-2">{product.title}</h2>
-                            <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
-                            <p className="text-2xl font-bold text-green-600">₹{product.price}</p>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Order Information */}
+                    <div className="lg:col-span-2 space-y-6">
+                        <div className="bg-white rounded-3xl shadow-xl shadow-blue-900/5 p-6 md:p-8 border border-gray-100">
+                            <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                Delivery Details
+                            </h3>
+
+                            {error && (
+                                <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-r-xl text-sm mb-6 animate-pulse">
+                                    <span className="font-bold">Error:</span> {error}
+                                </div>
+                            )}
+
+                            <form onSubmit={handlePlaceOrder} className="space-y-6">
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">
+                                        Shipping Address
+                                    </label>
+                                    <textarea
+                                        value={address}
+                                        onChange={(e) => setAddress(e.target.value)}
+                                        placeholder="Flat No, Building, Campus/Area name..."
+                                        rows={4}
+                                        className="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all placeholder-gray-400 font-medium resize-none"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">
+                                        Phone Number
+                                    </label>
+                                    <div className="relative">
+                                        <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 font-bold">+91</span>
+                                        <input
+                                            type="tel"
+                                            value={phone}
+                                            onChange={(e) => setPhone(e.target.value)}
+                                            placeholder="98765 43210"
+                                            maxLength={10}
+                                            className="w-full pl-14 pr-5 py-4 rounded-2xl border border-gray-200 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all placeholder-gray-400 font-medium"
+                                        />
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={placing || product.sold}
+                                    className="hidden lg:block w-full bg-blue-600 text-white font-black py-5 px-8 rounded-2xl hover:bg-blue-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-blue-500/20 active:scale-[0.98] text-lg"
+                                >
+                                    {placing ? 'Processing...' : `Place Order — ₹${product.price}`}
+                                </button>
+                            </form>
                         </div>
                     </div>
 
-                    {/* Delivery Form */}
-                    <form onSubmit={handlePlaceOrder} className="p-6 border-t space-y-5">
-                        <h3 className="text-xl font-semibold text-gray-800">Delivery Details</h3>
+                    {/* Order Summary Sidebar */}
+                    <div className="space-y-6">
+                        <div className="bg-white rounded-3xl shadow-xl shadow-blue-900/5 p-6 border border-gray-100 overflow-hidden">
+                            <h3 className="text-xl font-bold text-gray-800 mb-6">Order Summary</h3>
 
-                        {error && (
-                            <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg text-sm">
-                                {error}
-                            </div>
-                        )}
-
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                Delivery Address
-                            </label>
-                            <textarea
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
-                                placeholder="Enter your full delivery address"
-                                rows={3}
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition resize-none"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                Phone Number
-                            </label>
-                            <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">+91</span>
-                                <input
-                                    type="tel"
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
-                                    placeholder="9876543210"
-                                    maxLength={10}
-                                    className="w-full pl-14 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition"
+                            <div className="flex gap-4 mb-6 pb-6 border-b border-gray-50">
+                                <img
+                                    src={product.image || 'https://via.placeholder.com/300'}
+                                    alt={product.title}
+                                    className="w-20 h-28 object-cover rounded-xl shadow-sm"
                                 />
+                                <div className="flex flex-col justify-center">
+                                    <h4 className="font-bold text-gray-900 line-clamp-2 mb-1">{product.title}</h4>
+                                    <p className="text-blue-600 font-black">₹{product.price}</p>
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Order Summary */}
-                        <div className="bg-gray-50 rounded-lg p-4">
-                            <div className="flex justify-between items-center mb-2">
-                                <span className="text-gray-600">Book Price</span>
-                                <span className="font-semibold">₹{product.price}</span>
+                            <div className="space-y-4 mb-6">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-500 font-medium">Subtotal</span>
+                                    <span className="text-gray-900 font-bold">₹{product.price}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-500 font-medium">Delivery</span>
+                                    <span className="text-green-500 font-bold uppercase tracking-widest text-[10px] bg-green-50 px-2 py-0.5 rounded">Free</span>
+                                </div>
+                                <div className="pt-4 border-t border-gray-50 flex justify-between items-center">
+                                    <span className="text-lg font-bold text-gray-900">Total</span>
+                                    <span className="text-2xl font-black text-blue-600">₹{product.price}</span>
+                                </div>
                             </div>
-                            <div className="flex justify-between items-center mb-2">
-                                <span className="text-gray-600">Delivery</span>
-                                <span className="font-semibold text-green-600">FREE</span>
-                            </div>
-                            <hr className="my-2" />
-                            <div className="flex justify-between items-center">
-                                <span className="text-lg font-bold">Total</span>
-                                <span className="text-lg font-bold text-green-600">₹{product.price}</span>
-                            </div>
-                        </div>
 
-                        <button
-                            type="submit"
-                            disabled={placing || product.sold}
-                            className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-4 px-6 rounded-lg hover:from-green-600 hover:to-green-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg text-lg"
-                        >
-                            {placing ? (
-                                <span className="flex items-center justify-center gap-2">
-                                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                            <div className="bg-blue-50 rounded-2xl p-4 flex gap-3 mb-6">
+                                <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center shrink-0">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                     </svg>
-                                    Processing Payment...
-                                </span>
-                            ) : (
-                                `Pay ₹${product.price} & Place Order`
-                            )}
-                        </button>
-                    </form>
+                                </div>
+                                <p className="text-xs text-blue-800 leading-relaxed font-medium">
+                                    Your payment is secure. We use end-to-end encryption for all transactions.
+                                </p>
+                            </div>
+
+                            {/* Mobile only button */}
+                            <button
+                                onClick={handlePlaceOrder}
+                                disabled={placing || product.sold}
+                                className="lg:hidden w-full bg-blue-600 text-white font-black py-5 px-8 rounded-2xl hover:bg-blue-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-blue-500/20 active:scale-[0.98] text-lg"
+                            >
+                                {placing ? 'Processing...' : `Place Order`}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
